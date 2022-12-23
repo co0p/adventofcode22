@@ -2,17 +2,21 @@ package de.kreuzwerker.adventofcode.day02
 
 import java.lang.Error
 
+private const val pRock = "A"
+
+private const val pPaper = "B"
+
+private const val pScissor = "C"
+
 class Game {
     var opponent: String = ""
     var player: String  = ""
+
     constructor(_opponent: String, _player: String) {
         opponent = _opponent
         player = _player
     }
 
-    fun playerWon(): Boolean {
-        return false
-    }
 
     private fun converToPoints(char: String):Int {
         when (char) {
@@ -29,25 +33,59 @@ class Game {
         val lostPoints = 0
 
         // A, X -> draw
-        if (opponent == "A" && player == "X") return drawBasePoints + converToPoints(player)
+        if (opponent == pRock && player == "X") return drawBasePoints + converToPoints(player)
         // A, Y -> win
-        if (opponent == "A" && player == "Y") return wonPoints + converToPoints(player)
+        if (opponent == pRock && player == "Y") return wonPoints + converToPoints(player)
         // A, Z
-        if (opponent == "A" && player == "Z") return lostPoints + converToPoints(player)
+        if (opponent == pRock && player == "Z") return lostPoints + converToPoints(player)
 
         // B, X
-        if (opponent == "B" && player == "X") return lostPoints + converToPoints(player)
+        if (opponent == pPaper && player == "X") return lostPoints + converToPoints(player)
         // B, Y -> draw
-        if (opponent == "B" && player == "Y") return drawBasePoints + converToPoints(player)
+        if (opponent == pPaper && player == "Y") return drawBasePoints + converToPoints(player)
         // B, Z
-        if (opponent == "B" && player == "Z") return wonPoints + converToPoints(player)
+        if (opponent == pPaper && player == "Z") return wonPoints + converToPoints(player)
 
         // C, X
-        if (opponent == "C" && player == "X") return wonPoints + converToPoints(player)
+        if (opponent == pScissor && player == "X") return wonPoints + converToPoints(player)
         // C, Y
-        if (opponent == "C" && player == "Y") return lostPoints + converToPoints(player)
+        if (opponent == pScissor && player == "Y") return lostPoints + converToPoints(player)
         // C, Z -> draw
-        if (opponent == "C" && player == "Z") return drawBasePoints + converToPoints(player)
+        if (opponent == pScissor && player == "Z") return drawBasePoints + converToPoints(player)
+
+        throw Error("should not happen")
+
+    }
+
+    fun scorePart2(): Int {
+        val drawBasePoints = 3
+        val wonPoints = 6
+        val lostPoints = 0
+
+        val rock = 1
+        val paper = 2
+        val scissor = 3
+
+        // A, X
+        if (opponent == pRock && player == "X") return lostPoints + scissor
+        // A, Y
+        if (opponent == pRock && player == "Y") return drawBasePoints + rock
+        // A, Z
+        if (opponent == pRock && player == "Z") return wonPoints + paper
+
+        // B, X
+        if (opponent == pPaper && player == "X") return lostPoints + rock
+        // B, Y -> draw
+        if (opponent == pPaper && player == "Y") return drawBasePoints + paper
+        // B, Z -> win
+        if (opponent == pPaper && player == "Z") return wonPoints + scissor
+
+        // C, X -> lost
+        if (opponent == pScissor && player == "X") return lostPoints +  paper
+        // C, Y - draw
+        if (opponent == pScissor && player == "Y") return drawBasePoints + scissor
+        // C, Z -> win
+        if (opponent == pScissor && player == "Z") return wonPoints + rock
 
         throw Error("should not happen")
 
@@ -74,6 +112,17 @@ class Day02 {
         println("sum" + sum)
 
         return sum
+    }
+
+    fun solvePart2(input: String): Int {
+        val games = mutableListOf<Game>()
+
+        input.lines().forEach {
+            var g = Game(it[0].toString(), it[2].toString())
+            games.add(g)
+        }
+
+        return games.sumOf {  it.scorePart2()  }
     }
 
     companion object {
